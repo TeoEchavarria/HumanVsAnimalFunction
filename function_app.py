@@ -9,7 +9,7 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 def human_vs_animal(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
     
-    x = np.linspace(0, 10, 50)
+    x = np.linspace(0, 15, 50)
     y = np.sin(x)
 
     # Convertir los datos a una lista de tuplas o a otro formato que prefiera el frontend
