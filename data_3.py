@@ -1,5 +1,4 @@
 import pandas as pd
-import statsmodels.api as sm
 
 # Tu DataFrame original
 data = {
@@ -20,39 +19,51 @@ dfs = {}
 for i in range(0, len(df), 3):
     dfs[f'df_{i//3}'] = df.iloc[i:i+3]
 
-# Transpose and rename the index to outcome type
-dfs['df_0'] = dfs['df_0'].astype(float)
-df = dfs['df_0'].T
-df.columns = ['win', 'lose', 'unknown']
-df = df.reset_index()
-df.rename(columns={'index': 'group'}, inplace=True)
+new_keys = ["rat", "house cat", "medium sized dog", "large dog", "kangaroo", "eagle", "grizzly bear", "wolf", "lion", "gorilla", "chimpanzee", "king cobra", "elephant", "crocodile", "goose"]
+dfs = dict(zip(new_keys, dfs.values()))
 
-# Melt the DataFrame to long format
-df_long = df.melt(id_vars='group', value_vars=['win', 'lose', 'unknown'], var_name='Outcome', value_name='Probability')
+# # Transpose and rename the index to outcome type
+# dfs['rat'] = dfs['rat'].astype(float)
+# df = dfs['rat'].T
+# df.columns = ['win', 'lose', 'unknown']
+# df = df.reset_index()
+# df.rename(columns={'index': 'group'}, inplace=True)
 
-# Create dummy variables for group and outcome
-df_long = pd.get_dummies(df_long, columns=['group', 'Outcome'])
+# # Melt the DataFrame to long format
+# df_long = df.melt(id_vars='group', value_vars=['win', 'lose', 'unknown'], var_name='Outcome', value_name='Probability')
 
-# Example model for 'win' outcome
-def create_model(df, outcome_col):
-    X = df.drop(['Probability'] + [col for col in df.columns if col.startswith('Outcome_') and not col.endswith(outcome_col)], axis=1)
-    y = df['Probability']
-    X = sm.add_constant(X)  # Adds a constant term to the predictors
-    model = sm.OLS(y, X).fit()
-    return model
+# # Create dummy variables for group and outcome
+# df_long = pd.get_dummies(df_long, columns=['group', 'Outcome'])
 
-# Create models
-models = {outcome: create_model(df_long, outcome) for outcome in ['win', 'lose', 'unknown']}
+# # Convert all columns involved in the regression to float
+# for col in df_long.columns:
+#     if col != 'Probability':
+#         df_long[col] = df_long[col].astype(float)
 
-# Function to make predictions
-def predict_outcome(attributes):
-    data = {f'group_{attr}': 1 for attr in attributes.split(', ')}
-    df_input = pd.DataFrame([data])
-    df_input = sm.add_constant(df_input.reindex(columns=models['win'].params.index, fill_value=0))
-    predictions = {outcome: model.predict(df_input)[0] for outcome, model in models.items()}
-    return predictions
+# df_long['Probability'] = df_long['Probability'].astype(float)
 
-# Example usage
-attributes = 'man, 35-54'
-predictions = predict_outcome(attributes)
-print("Predicted probabilities:", predictions)
+# # Example model for 'win' outcome
+# def create_model(df, outcome_col):
+#     print(outcome_col)
+#     X = df[[col for col in df.columns if col != 'Probability']]
+#     y = df['Probability']
+#     X = sm.add_constant(X)  # Adds a constant term to the predictors
+#     model = sm.OLS(y, X).fit()
+#     joblib.dump(model, f'models/{outcome_col}.pkl')
+#     return model
+
+# # Create models for each outcome
+# models = {outcome: create_model(df_long[df_long[f'Outcome_{outcome}'] == 1], outcome) for outcome in ['win', 'lose', 'unknown']}
+
+# # Function to make predictions
+# def predict_outcome(attributes):
+#     data = {f'group_{attr}': 1 for attr in attributes.split(', ')}
+#     df_input = pd.DataFrame([data])
+#     df_input = sm.add_constant(df_input.reindex(columns=models['win'].params.index, fill_value=0))
+#     predictions = {outcome: model.predict(df_input)[0] for outcome, model in models.items()}
+#     return predictions
+
+# # Example usage
+# attributes = 'man, 35-54'
+# predictions = predict_outcome(attributes)
+# print("Predicted probabilities:", predictions)
