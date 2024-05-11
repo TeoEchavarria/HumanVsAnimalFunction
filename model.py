@@ -1,13 +1,10 @@
 import pandas as pd
-import statsmodels.api as sm
 import joblib
 
-from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import accuracy_score
 
 def create_model(df, outcome_col, age_group, gender):
     column_transformer = ColumnTransformer(
