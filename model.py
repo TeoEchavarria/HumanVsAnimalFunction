@@ -31,7 +31,7 @@ def create_model(df, outcome_col, age_group, gender):
     
     
 
-def model_train(df, name, age_group, gender):
+def model_train(df, age_group, gender):
     df = df.astype(float)
     df = df.T
     df.columns = ['win', 'lose', 'unknown']

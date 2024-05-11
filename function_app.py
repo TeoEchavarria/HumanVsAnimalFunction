@@ -16,10 +16,11 @@ def prediction(req: func.HttpRequest) -> func.HttpResponse:
     gener = req_body.get('gener')
     age = req_body.get('age')
     
-    response = {key : model_train(values, key, age, gener) for key, values in dfs.items()}
+    response = {key : model_train(values, age, gener) for key, values in dfs.items()}
+    response_body = json.dumps(response)
 
     if gener and age:
-        return func.HttpResponse(json.dumps(response), content_type='application/json')
+        return func.HttpResponse(response_body)
     else:
         return func.HttpResponse(
              "This HTTP triggered function executed successfully. Pass a age and genner in the query string or in the request body for a personalized response.",
