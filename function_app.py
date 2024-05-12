@@ -12,8 +12,8 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 def prediction(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
     
-    gener = req_body.get('gener')
-    age = req_body.get('age')
+    gener = req.params.get('gener')
+    age = req.params.get('age')
     if not gener and not age:
         try:
             req_body = req.get_json()
