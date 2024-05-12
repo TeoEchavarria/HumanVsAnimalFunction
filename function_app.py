@@ -11,13 +11,23 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 @app.route(route="prediction")
 def prediction(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
-
-    req_body = req.get_json()
+    
     gener = req_body.get('gener')
     age = req_body.get('age')
+    if not gener and not age:
+        try:
+            req_body = req.get_json()
+        except ValueError:
+            raise "Not parameters"
+        else:
+            gener = req_body.get('gener')
+            age = req_body.get('age')
     
-    response = {key : model_train(values, age, gener) for key, values in dfs.items()}
-    response_body = json.dumps(response)
+    try:
+        response = {key : model_train(values, age, gener) for key, values in dfs.items()}
+        response_body = json.dumps(response)
+    except:
+        raise "Prediction Failed"
 
     if gener and age:
         return func.HttpResponse(response_body)
