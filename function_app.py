@@ -24,7 +24,7 @@ def prediction(req: func.HttpRequest) -> func.HttpResponse:
             age = req_body.get('age')
     
     try:
-        response = {key : model_train(values, age, gener) for key, values in dfs.items()}
+        response = {key : model_train(values, age, gener, key) for key, values in dfs.items()}
         response_body = json.dumps(response)
     except:
         raise "Prediction Failed"
