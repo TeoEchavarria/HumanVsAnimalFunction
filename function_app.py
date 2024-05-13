@@ -1,7 +1,6 @@
 import azure.functions as func
 import logging
 
-from data_3 import dfs
 from model import model_train
 import json
 
@@ -24,7 +23,8 @@ def prediction(req: func.HttpRequest) -> func.HttpResponse:
             age = req_body.get('age')
     
     try:
-        response = {key : model_train(values, age, gener, key) for key, values in dfs.items()}
+        keys = ["rat", "house cat", "medium dog", "large dog", "kangaroo", "eagle", "grizzly bear", "wolf", "lion", "gorilla", "chimpanzee", "king cobra", "elephant", "crocodile", "goose"]
+        response = {key : model_train(age, gener, key) for key in keys}
         response_body = json.dumps(response)
     except:
         raise "Prediction Failed"
